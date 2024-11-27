@@ -3,8 +3,8 @@ name: my first workflow
 on: [push]
 
 jobs: 
-    echo:
-        runs-on: ubuntu-latest
+  echo:
+    runs-on: ubuntu-latest
 
-        steps:
-            - run: echo "Hello, World!"
+    steps:
+      - run: echo "Hello, World!"
