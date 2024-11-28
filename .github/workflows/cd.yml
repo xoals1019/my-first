@@ -67,6 +67,7 @@ jobs:
     update-ecs:
         name: Update ECS Service
         runs-on: ubuntu-latest
+        environment: AWS-accessKey
         needs: build-and-push-to-ecr
 
         steps:
