@@ -9,6 +9,10 @@ jobs:
     deploy:
         name: AWS S3 SYNC
         runs-on: ubuntu-latest
+        environment: AWS-accessKey
+        permissions:
+            id-token: write
+            contents: read
 
         steps:
             - name: Checkout repository code
@@ -33,6 +37,7 @@ jobs:
     build-and-push-to-ecr:
         name: Build and Push to ECR
         runs-on: ubuntu-latest
+        environment: AWS-accessKey
         permissions:
             id-token: write
             contents: read
@@ -52,7 +57,7 @@ jobs:
               uses: aws-actions/amazon-ecr-login@v2
             
             - name: Build and Push Docker image
-              uses: docker/build-push-action@v5
+              uses: docker/build-push-action@v4
               with:
                     context: .  #루트 디렉토리를 Docker 컨텍스트로 지정하는 것. 
                     file: ./Dockerfile #컨텍스트 경로에서 Dokcerfile을 찾고 빌드를 진행함.
