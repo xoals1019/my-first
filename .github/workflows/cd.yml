@@ -22,22 +22,23 @@ jobs:
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v3
               with:
-                aws-region: ap-northeast-2
                 role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-                
+                aws-region: ap-northeast-2
               #AWS S3에 접근하기 위한 AWS 엑세스 키를 설정함. 
               #github secrets에 저장된 AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION을 사용함.
              
             - name: Sync files to S3
               run: |
-                aws s3 sync .files s3://my-second-bucket-haha-behappy-153-tm
+                aws s3 sync .files s3://my-second-bucket-haha-behappy-153-tm --delete
 
             #현재 디렉토리의 파일을 S3 버킷에 동기화함.
 
     build-and-push-to-ecr:
         name: Build and Push to ECR
         runs-on: ubuntu-latest
-        environment: AWS-accessKey
+        environment: AWS-accessKey 
+        #이거 안 붙여서 삽질.... 환경변수를 따로 environment에 지정했는데
+        # 이 코드가 없으면 저 변수를 인식을 못해서 오류가 발생함. 
         permissions:
             id-token: write
             contents: read
