@@ -47,7 +47,7 @@ jobs:
                     context: .  #루트 디렉토리를 Docker 컨텍스트로 지정하는 것. 
                     file: ./Dockerfile #컨텍스트 경로에서 Dokcerfile을 찾고 빌드를 진행함.
                     push: true
-                    tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-northeast-2.amazonaws.com/my-nodejs-app:latest
+                    tags: ${{ secrets.AWS_ROLE_ARN }}.dkr.ecr.ap-northeast-2.amazonaws.com/my-nodejs-app:latest
     update-ecs:
         name: Update ECS Service
         runs-on: ubuntu-latest
