@@ -29,7 +29,7 @@ jobs:
              
             - name: Sync files to S3
               run: |
-                aws s3 sync .files s3://my-second-bucket-haha-behappy-153-tm --delete
+                aws s3 sync ./files s3://my-second-bucket-haha-behappy-153-tm --delete
 
             #현재 디렉토리의 파일을 S3 버킷에 동기화함.
 
