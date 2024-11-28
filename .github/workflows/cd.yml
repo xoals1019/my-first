@@ -33,6 +33,9 @@ jobs:
     build-and-push-to-ecr:
         name: Build and Push to ECR
         runs-on: ubuntu-latest
+        permissions:
+            id-token: write
+            contents: read
 
         steps: 
             - name: Checkout source code
