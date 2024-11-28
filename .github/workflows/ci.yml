@@ -1,0 +1,36 @@
+name : CI
+
+on:
+  push:
+    branches: #main 브랜치에 대해 동작하도록 지정.
+      - main
+  pull_request:
+    branches: 
+      - main
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    name: Analyze JavaScript code with CodeQL
+
+    steps:
+      - name : Checkout repository - source code
+        uses: actions/checkout@v3
+         #저장소의 코드를 가져와 Github Actions 실행환경에 다운함
+          
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2 
+        with:
+          languages: javascript
+          #CodeQL을 사용할 수 있도록 초기화 
+          #분석언어 지정
+      
+      - name: "Perform CodeQL Analysis" #CodeQL을 활용하여 코드 분석
+        uses: github/codeql-action/analyze@v2
+
+        #잠재적인 취약점 및 보안 문제를 찾음. 
+        #분석결과는 Security tab에서 확인 가능.
+  
+
+
+#CodeQL을 활용하여 javascript 코드의 취약점을 검사하도록 설정. 

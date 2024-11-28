@@ -1,0 +1,73 @@
+name : "Deploy to S3" #S3에 배포하기 위한 설정
+
+on:
+    push:
+        branches:
+        - main
+
+jobs:
+    deploy:
+        name: AWS S3 SYNC
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository code
+              uses: actions/checkout@v3
+              #저장소의 코드를 가져와 Github Actions 실행환경에 다운함
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v3
+              with:
+                aws-region: ${{ secrets.AWS_REGION }}
+                role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+                
+              #AWS S3에 접근하기 위한 AWS 엑세스 키를 설정함. 
+              #github secrets에 저장된 AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION을 사용함.
+             
+            - name: Sync files to S3
+              run: |
+                aws s3 sync .files s3://my-second-bucket-haha-behappy-153-tm
+
+            #현재 디렉토리의 파일을 S3 버킷에 동기화함.
+
+    build-and-push-to-ecr:
+        name: Build and Push to ECR
+        runs-on: ubuntu-latest
+
+        steps: 
+            - name: Checkout source code
+              uses: actions/checkout@v3
+            
+            - name: Login to Amazon ECR
+              uses: aws-actions/amazon-ecr-login@v2
+            
+            - name: Build and Push Docker image
+              uses: docker/build-push-action@v5
+              with:
+                    context: .  #루트 디렉토리를 Docker 컨텍스트로 지정하는 것. 
+                    file: ./Dockerfile #컨텍스트 경로에서 Dokcerfile을 찾고 빌드를 진행함.
+                    push: true
+                    tags: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/my-nodejs-app:latest
+    update-ecs:
+        name: Update ECS Service
+        runs-on: ubuntu-latest
+        needs: build-and-push-to-ecr
+
+        steps:
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v3
+              with:
+                aws-region: ${{ secrets.AWS_REGION }}
+                role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+
+            - name: Update ECS Service
+              run: |
+                aws ecs update-service \
+                --cluster my-ecs-cluster \
+                --service my-ecs-service \
+                --force-new-deployment
+    
+
+#OIDC는 AWS와 연동하기 위해 설정한 방식이다. 
+#github secrets에 저장된 AWS_ROLE_ARN과 AWS_REGION만 설정하면 
+#엑세스 키없이 안전하게 AWS 리소스에 접근이 가능함. 
